@@ -2,7 +2,6 @@
   "name": "typeorm-test-features",
   "version": "1.0.0",
   "description": "Proof-of-Concept and issue testing w/ TypeORM package",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +14,16 @@
   "bugs": {
     "url": "https://github.com/mrnagydavid/typeorm-test-features/issues"
   },
-  "homepage": "https://github.com/mrnagydavid/typeorm-test-features#readme"
+  "homepage": "https://github.com/mrnagydavid/typeorm-test-features#readme",
+  "dependencies": {
+    "@types/mysql": "^2.15.5",
+    "@types/node": "^10.5.1",
+    "@types/supertest": "^2.0.4",
+    "jest": "^23.1.0",
+    "@types/jest": "^23.0.0",
+    "mysql": "^2.15.0",
+    "ts-node": "^7.0.0",
+    "typeorm": "^0.2.7",
+    "typescript": "^2.9.2"
+  }
 }
