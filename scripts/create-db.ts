@@ -1,35 +1,49 @@
 import { createConnection } from 'mysql';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const modeArg = (process.argv.length > 2) ? process.argv[2] : 'create';
+const mode = (modeArg === 'drop') ? 'drop' : 'create';
 
 const LOG_TAG = "[create-database]";
 
 const config = {
-  username: process.env.TYPEORM_ROOT_USERNAME,
-  host: process.env.TYPEORM_HOST,
-  port: process.env.TYPEORM_HOST,
-  password: process.env.TYPEORM_ROOT_PASSWORD,
-  database: process.env.TYPEORM_DATABASE
+  host: process.env.DB_HOST || 'localhost',
+  port: (process.env.DB_PORT) ?  +process.env.DB_PORT : 3306,
+  database: process.env.DB_DATABASE || 'mysql',
+  username: process.env.DB_USERNAME || 'root',
+  password: process.env.DB_ROOT_PASSWORD || '',
+  root: process.env.DB_ROOT_USERNAME || 'root',
 };
 
-const connection = createConnection({
+const connectionConfig = {
   host: config.host,
   port: config.port,
-  username: config.username,
+  user: config.root,
   password: config.password
-});
+};
+console.log(LOG_TAG, 'Connecting with:', connectionConfig);
 
+const connection = createConnection(connectionConfig);
 new Promise(r => connection.connect(r))
   .then((err) => {
     if (err) throw err;
-    return new Promise(r => connection.query(`CREATE DATABASE ${config.database}`, r))
+    console.log(LOG_TAG, 'Connected.');
+    console.log(LOG_TAG, `${(mode === 'drop') ? 'Dropping' : 'Creating'} database...`)
+    return new Promise(r => connection.query(`${(mode === 'drop') ? 'DROP' : 'CREATE'} DATABASE ${config.database}`, r))
       .then((err) => {
         if (err) throw err;
       })
-      .then(() => console.log(LOG_TAG, `Database ${config.database} created!`))
-      .catch((_err) => console.log(LOG_TAG, `Database ${config.database} already exists!`))
-      .then(() => new Promise(r => connection.query(`GRANT ALL PRIVILEGES ON ${config.database}.* TO '${config.username}'@'%';`, r))
+      .then(() => console.log(LOG_TAG, `Database ${config.database} ${(mode === 'drop') ? 'dropped' : 'created'}!`))
+      .catch((_err) => console.log(LOG_TAG, `Database ${config.database} already ${(mode === 'drop') ? 'dropped' : 'created'}!`))
+      .then(() => {
+        console.log(`GRANT ALL PRIVILEGES ON ${config.database}.* TO '${config.username}'@'%';`);
+        return new Promise(r => connection.query(`GRANT ALL PRIVILEGES ON ${config.database}.* TO '${config.username}'@'%';`, r))
         .then((err) => {
           if (err) throw err;
-        }))
+        })
+      })
   })
   .then(() => process.exit(0))
   .catch((err) => {
