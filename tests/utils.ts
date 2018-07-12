@@ -1,5 +1,6 @@
 import { getConnectionOptions, createConnection, Connection } from "typeorm";
 import { SimpleEntity } from "../src/db/entities/simple";
+import { SpatialEntity } from "../src/db/entities/spatial";
 
 export async function createConnectionForTests(): Promise<Connection> {
 	// Change the options because:
@@ -15,7 +16,8 @@ export async function createConnectionForTests(): Promise<Connection> {
 
 export async function clearTypeORMDatabase() {
 	const sequentialSchemaList = [
-    SimpleEntity
+		SimpleEntity,
+		SpatialEntity
 	];
 
 	for (const entityClass of sequentialSchemaList) {
