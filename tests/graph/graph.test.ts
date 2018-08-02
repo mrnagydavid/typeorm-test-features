@@ -11,7 +11,7 @@ describe('eager loading', () => {
     await clearTypeORMDatabase();
   });
   afterEach(async () => {
-    // await clearTypeORMDatabase();
+    await clearTypeORMDatabase();
   });
   afterAll(async () => {
     await connection.close();
